@@ -10,7 +10,7 @@ int main(int argc, char const *argv[])
 
     while(isRunning)
     {
-		chip8.FetchDecodeAndExecute();
+        chip8.FetchDecodeAndExecute();
         chip8.keypad = Console::checkKeys();
 
         Console::drawBuffer(chip8.video);

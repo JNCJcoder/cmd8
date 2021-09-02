@@ -2,16 +2,16 @@
 
 Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().count())
 {
-    pc 		= START_ADDRESS;
-	opcode 	= 0;
-	sp 		= 0;
-	index 	= 0;
+	pc		= START_ADDRESS;
+	opcode	= 0;
+	sp		= 0;
+	index	= 0;
 
-    memset(video, 0, sizeof(video));
+	memset(video, 0, sizeof(video));
 	memset(memory, 0x0, MAX_MEMORY);
 	memcpy(memory, fontset, FONTSET_SIZE);
 
-    randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
+	randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
 
 	table[0x0] 		= &Chip8::Table0;
 	table[0x1] 		= &Chip8::OP_1nnn;
@@ -64,19 +64,19 @@ bool Chip8::LoadROM(const char* fileName)
 	const bool RomOpened = file.is_open();
     if (RomOpened)
     {
-        std::streampos RomSize = file.tellg();
+		std::streampos RomSize = file.tellg();
 		char* buffer = new char[RomSize];
 
 		file.seekg(0, std::ios::beg);
 		file.read(buffer, RomSize);
 
 		for (long index = 0; index < RomSize; ++index)
-            memory[START_ADDRESS + index] = buffer[index];
+			memory[START_ADDRESS + index] = buffer[index];
 
 		delete[] buffer;
     }
 
-    file.close();
+	file.close();
 	return RomOpened;
 }
 
