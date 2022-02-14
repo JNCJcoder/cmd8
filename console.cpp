@@ -1,3 +1,5 @@
+#define WIN32_LEAN_AND_MEAN
+#define NOCOMM
 #include <windows.h>
 
 constexpr int SCREEN_WIDTH  =  64;
