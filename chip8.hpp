@@ -100,8 +100,8 @@ class Chip8
 
     public:
         Chip8();
-        bool LoadROM(const char* fileName);
-        void FetchDecodeAndExecute();
+        bool loadRom(const char* fileName);
+        void fetchDecodeAndExecute();
 
         uint32_t    video[SCREEN_SIZE];
         uint8_t     keypad;

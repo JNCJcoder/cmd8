@@ -61,30 +61,30 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     tableF[0x65]    = &Chip8::OP_Fx65;
 }
 
-bool Chip8::LoadROM(const char* fileName)
+bool Chip8::loadRom(const char* fileName)
 {
     std::ifstream file(fileName, std::ios::binary | std::ios::ate);
 
-    const bool RomOpened = file.is_open();
-    if (RomOpened)
+    const bool romIsOpen = file.is_open();
+    if (romIsOpen)
     {
-        std::streampos RomSize = file.tellg();
-        char* buffer = new char[RomSize];
+        std::streampos romSize = file.tellg();
+        char* buffer = new char[romSize];
 
         file.seekg(0, std::ios::beg);
-        file.read(buffer, RomSize);
+        file.read(buffer, romSize);
 
-        for (long index = 0; index < RomSize; index++)
+        for (long index = 0; index < romSize; index++)
             memory[START_ADDRESS + index] = buffer[index];
         
         delete[] buffer;
     }
 
     file.close();
-    return RomOpened;
+    return romIsOpen;
 }
 
-void Chip8::FetchDecodeAndExecute()
+void Chip8::fetchDecodeAndExecute()
 {
     opcode = (memory[pc] << 8u) | memory[pc + 1];
 
