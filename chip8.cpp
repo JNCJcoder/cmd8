@@ -250,8 +250,8 @@ void Chip8::OP_Cxkk()
 void Chip8::OP_Dxyn()
 {
     uint8_t height = OP_NIBBLE;
-    uint8_t xPos = registers[OP_HIGH_BYTE] % SCREEN_WIDTH;
-    uint8_t yPos = registers[OP_LOW_BYTE] % SCREEN_HEIGHT;
+    uint8_t xPosition = registers[OP_HIGH_BYTE] % SCREEN_WIDTH;
+    uint8_t yPosition = registers[OP_LOW_BYTE] % SCREEN_HEIGHT;
 
     registers[0xF] = 0;
 
@@ -259,10 +259,10 @@ void Chip8::OP_Dxyn()
     {
         uint8_t spriteByte = memory[index + row];
 
-        for (unsigned int col = 0; col < 8; ++col)
+        for (unsigned int column = 0; column < 8; ++column)
         {
-            uint8_t spritePixel = spriteByte & (0x80u >> col);
-            uint32_t* screenPixel = &video[(yPos + row) * SCREEN_WIDTH + (xPos + col)];
+            uint8_t spritePixel = spriteByte & (0x80u >> column);
+            uint32_t* screenPixel = &video[(yPosition + row) * SCREEN_WIDTH + (xPosition + column)];
 
             if (spritePixel)
             {
