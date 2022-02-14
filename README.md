@@ -9,6 +9,11 @@
 ## 💻 Info:
 </br>
 
+<div align="center">
+<img src=".github/chip8-test.png" alt="Chip8 Opcode Test" width="300">
+<img src=".github/snake8.gif" alt="Snake Game in Chip8" width="300">
+</div>
+
 Emulador de chip8 feito em C/C++ e rodando emcima do cmd(prompt de comando).
 Funcionando apenas no Windows.
 
