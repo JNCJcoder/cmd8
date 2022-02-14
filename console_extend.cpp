@@ -1,5 +1,6 @@
-#include "console.cpp"
 #include <cstdint>
+#include <windows.h>
+#include "console.cpp"
 
 namespace Console
 {

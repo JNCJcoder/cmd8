@@ -1,3 +1,9 @@
+#include <cstdint>
+#include <cstring>
+#include <fstream>
+#include <chrono>
+#include <thread>
+#include <random>
 #include "chip8.hpp"
 
 Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().count())
