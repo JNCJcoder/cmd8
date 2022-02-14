@@ -298,28 +298,8 @@ void Chip8::OP_Fx07()
 
 void Chip8::OP_Fx0A()
 {
-    uint8_t Vx = OP_HIGH_BYTE;
-
-    switch (keypad)
-    {
-        case 0:     registers[Vx] = 0;      break;
-        case 1:     registers[Vx] = 1;      break;
-        case 2:     registers[Vx] = 2;      break;
-        case 3:     registers[Vx] = 3;      break;
-        case 4:     registers[Vx] = 4;      break;
-        case 5:     registers[Vx] = 5;      break;
-        case 6:     registers[Vx] = 6;      break;
-        case 7:     registers[Vx] = 7;      break;
-        case 8:     registers[Vx] = 8;      break;
-        case 9:     registers[Vx] = 9;      break;
-        case 10:    registers[Vx] = 10;     break;
-        case 11:    registers[Vx] = 11;     break;
-        case 12:    registers[Vx] = 12;     break;
-        case 13:    registers[Vx] = 13;     break;
-        case 14:    registers[Vx] = 14;     break;
-        case 15:    registers[Vx] = 15;     break;
-        default:        pc -= 2;            break;
-    }
+    if (keypad <= 15)   registers[OP_HIGH_BYTE] = keypad;
+    else                pc -= 2;
 }
 
 void Chip8::OP_Fx15()
