@@ -12,6 +12,12 @@
 #define REGISTERS       16
 #define STACK_LEVELS    16
 
+#define OP_ADDRESS      (opcode & 0x0FFFu)
+#define OP_BYTE         (opcode & 0x00FFu)
+#define OP_NIBBLE       (opcode & 0x000Fu)
+#define OP_HIGH_BYTE    ((opcode & 0x0F00u) >> 8u)
+#define OP_LOW_BYTE     ((opcode & 0x00F0u) >> 4u)
+
 constexpr uint8_t fontset[FONTSET_SIZE] =
 {
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
