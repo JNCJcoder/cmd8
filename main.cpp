@@ -1,3 +1,4 @@
+#include <thread>
 #include <chrono>
 #include "console_extend.cpp"
 #include "chip8.cpp"

@@ -2,7 +2,6 @@
 #include <cstring>
 #include <fstream>
 #include <chrono>
-#include <thread>
 #include <random>
 #include "chip8.hpp"
 
