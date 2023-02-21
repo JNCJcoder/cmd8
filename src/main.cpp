@@ -1,7 +1,7 @@
 #include <thread>
 #include <chrono>
-#include "console_extend.cpp"
-#include "chip8.cpp"
+#include "console_extend.hpp"
+#include "chip8.hpp"
 
 int main(int argc, char const *argv[])
 {

@@ -1,5 +1,11 @@
+#ifndef __CHIP8_HPP__
+#define __CHIP8_HPP__
+
 #include <cstdint>
 #include <random>
+#include <fstream>
+#include <chrono>
+#include "console_extend.hpp"
 
 #define MAX_MEMORY      4096
 #define FONTSET_SIZE    80
@@ -106,3 +112,5 @@ class Chip8
         uint32_t    video[SCREEN_SIZE];
         uint8_t     keypad;
 };
+
+#endif // __CHIP8_HPP__
