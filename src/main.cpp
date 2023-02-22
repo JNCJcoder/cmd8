@@ -1,5 +1,3 @@
-#include <thread>
-#include <chrono>
 #include "console_extend.hpp"
 #include "chip8.hpp"
 
@@ -18,7 +16,7 @@ int main(int argc, char const *argv[])
         Console::drawBuffer(chip8.video);
         Console::updateScreen();
 
-        std::this_thread::sleep_for(std::chrono::microseconds(1200));
+        Sleep(10);
     }
 
     Console::exit();
