@@ -5,7 +5,7 @@
 #include <random>
 #include <fstream>
 #include <chrono>
-#include "console_extend.hpp"
+#include "console.hpp"
 
 #define MAX_MEMORY      4096
 #define FONTSET_SIZE    80

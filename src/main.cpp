@@ -1,4 +1,4 @@
-#include "console_extend.hpp"
+#include "console.hpp"
 #include "chip8.hpp"
 
 int main(int argc, char const *argv[])
