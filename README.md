@@ -33,7 +33,7 @@ Programas testados:
 
 Compile:
 ```
-g++ main.cpp -O3 -o cmd8.exe
+make
 ```
 
 Running:
