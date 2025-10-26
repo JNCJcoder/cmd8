@@ -87,13 +87,13 @@ void Chip8::fetchDecodeAndExecute()
     pc += 2;
 
     ((*this).*(table[(opcode & 0xF000u) >> 12u]))();
+}
 
+void Chip8::updateTimers()
+{
     if (delayTimer > 0) --delayTimer;
-    if (soundTimer)
-    {
-        if (soundTimer == 1) Beep(750, 300);
-        --soundTimer;
-    }
+    if (soundTimer > 0) --soundTimer;
+    if (soundTimer == 1) Beep(750, 300);
 }
 
 void Chip8::Table0()

@@ -108,6 +108,7 @@ class Chip8
         Chip8();
         bool loadRom(const char* fileName);
         void fetchDecodeAndExecute();
+        void updateTimers();
 
         uint32_t    video[SCREEN_SIZE];
         uint8_t     keypad;

@@ -12,6 +12,7 @@ int main(int argc, char const *argv[])
     {
         chip8.fetchDecodeAndExecute();
         chip8.keypad = Console::checkKeys();
+        chip8.updateTimers();
 
         Console::drawBuffer(chip8.video);
         Console::updateScreen();
