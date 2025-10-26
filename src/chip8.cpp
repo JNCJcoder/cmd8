@@ -6,6 +6,9 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     opcode  = 0x0000;
     index   = 0x0000;
     sp      = 0x00;
+    
+    delayTimer = 0u;
+    soundTimer = 0u;
 
     memset(video, 0, sizeof(video));
     memset(memory, 0x0, MAX_MEMORY);
