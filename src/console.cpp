@@ -66,5 +66,5 @@ void Console::updateScreen()
 
 void Console::beep()
 {
-    Beep(750, 300);
+    Beep(800, 16);
 }
