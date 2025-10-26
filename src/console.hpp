@@ -6,21 +6,25 @@
 #include <windows.h>
 #include <cstdint>
 
-constexpr int SCREEN_WIDTH  =  64;
-constexpr int SCREEN_HEIGHT =  32;
-constexpr int SCREEN_SIZE   =  SCREEN_WIDTH * SCREEN_HEIGHT;
+constexpr int CONSOLE_SCREEN_WIDTH  =  64;
+constexpr int CONSOLE_SCREEN_HEIGHT =  32;
+constexpr int CONSOLE_SCREEN_SIZE   =  CONSOLE_SCREEN_WIDTH * CONSOLE_SCREEN_HEIGHT;
 
-namespace Console
+class Console
 {
-    extern wchar_t *screen;
-    extern HANDLE hConsole;
+    private:
+        wchar_t *screen = new wchar_t[CONSOLE_SCREEN_SIZE];
+        HANDLE hConsole = INVALID_HANDLE_VALUE;
+    
+    public:
+        Console();
+        ~Console();
 
-    void init();
-    void draw(const int x, const int y, short character);
-    void drawBuffer(uint32_t* buffer);
-    uint8_t checkKeys();
-    void updateScreen();
-    void exit();
-}
+        void draw(const uint16_t x, const uint16_t y, short character);
+        void drawBuffer(uint32_t* buffer);
+        uint8_t checkKeys();
+        void updateScreen();
+        void beep();
+};
 
 #endif // __CONSOLE_HPP__

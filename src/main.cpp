@@ -5,8 +5,7 @@
 
 int main(int argc, char const *argv[])
 {
-    Console::init();
-
+    Console console;
     Chip8 chip8;
     bool isRunning = chip8.loadRom(argv[1]);
 
@@ -33,7 +32,7 @@ int main(int argc, char const *argv[])
             origin += FRAME_TIME_MS;
             frameCatchUp++;
 
-            chip8.keypad = Console::checkKeys();
+            chip8.keypad = console.checkKeys();
 
             for (int index = 0; index < TICKRATE; index++)
             {
@@ -41,13 +40,17 @@ int main(int argc, char const *argv[])
             }
 
             chip8.updateTimers();
-            Console::drawBuffer(chip8.video);
-            Console::updateScreen();
+            if(chip8.soundTimer == 1)
+            {
+                console.beep();
+            }
+
+            console.drawBuffer(chip8.video);
+            console.updateScreen();
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
-    Console::exit();
     return 0;
 }

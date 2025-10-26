@@ -5,7 +5,7 @@
 #include <random>
 #include <fstream>
 #include <chrono>
-#include "console.hpp"
+#include <cstring>
 
 #define MAX_MEMORY      4096
 #define FONTSET_SIZE    80
@@ -19,6 +19,10 @@
 #define OP_NIBBLE       (opcode & 0x000Fu)
 #define OP_HIGH_BYTE    ((opcode & 0x0F00u) >> 8u)
 #define OP_LOW_BYTE     ((opcode & 0x00F0u) >> 4u)
+
+constexpr int SCREEN_WIDTH  =  64;
+constexpr int SCREEN_HEIGHT =  32;
+constexpr int SCREEN_SIZE   =  SCREEN_WIDTH * SCREEN_HEIGHT;
 
 constexpr uint8_t fontset[FONTSET_SIZE] =
 {
@@ -51,7 +55,6 @@ class Chip8
         uint8_t     memory[MAX_MEMORY];
         uint8_t     sp;
         uint8_t     delayTimer;
-        uint8_t     soundTimer;
 
         std::default_random_engine randGen;
         std::uniform_int_distribution<uint8_t> randByte;
@@ -112,6 +115,7 @@ class Chip8
 
         uint32_t    video[SCREEN_SIZE];
         uint8_t     keypad;
+        uint8_t     soundTimer;
 };
 
 #endif // __CHIP8_HPP__

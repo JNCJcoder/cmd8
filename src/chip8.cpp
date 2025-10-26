@@ -93,7 +93,6 @@ void Chip8::updateTimers()
 {
     if (delayTimer > 0) --delayTimer;
     if (soundTimer > 0) --soundTimer;
-    if (soundTimer == 1) Beep(750, 300);
 }
 
 void Chip8::Table0()
