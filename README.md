@@ -3,6 +3,9 @@
   cmd8
   <br>
 </h1>
+<div align="center">
+<img src="./.github/cmd8.webp" style="width:500px">
+</div>
 <h4 align="center">Emulador de chip8 feito em C++ usando o prompt de comando</h4>
 </br>
 
