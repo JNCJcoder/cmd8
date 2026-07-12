@@ -179,16 +179,19 @@ void Chip8::OP_8xy0()
 void Chip8::OP_8xy1()
 {
     registers[OP_HIGH_BYTE] |= registers[OP_LOW_BYTE];
+    registers[0xF] = 0;
 }
 
 void Chip8::OP_8xy2()
 {
     registers[OP_HIGH_BYTE] &= registers[OP_LOW_BYTE];
+    registers[0xF] = 0;
 }
 
 void Chip8::OP_8xy3()
 {
     registers[OP_HIGH_BYTE] ^= registers[OP_LOW_BYTE];
+    registers[0xF] = 0;
 }
 
 void Chip8::OP_8xy4()
