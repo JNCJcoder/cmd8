@@ -198,10 +198,10 @@ void Chip8::OP_8xy4()
 {
     uint16_t sum = registers[OP_HIGH_BYTE] + registers[OP_LOW_BYTE];
 
+    registers[OP_HIGH_BYTE] = sum & 0xFFu;
+
     if (sum > 255U) registers[0xF] = 1;
     else            registers[0xF] = 0;
-
-    registers[OP_HIGH_BYTE] = sum & 0xFFu;
 }
 
 void Chip8::OP_8xy5()
