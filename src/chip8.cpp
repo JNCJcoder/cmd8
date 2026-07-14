@@ -206,7 +206,7 @@ void Chip8::OP_8xy4()
 
 void Chip8::OP_8xy5()
 {
-    if (registers[OP_HIGH_BYTE] > registers[OP_LOW_BYTE])   registers[0xF] = 1;
+    if (registers[OP_HIGH_BYTE] >= registers[OP_LOW_BYTE])  registers[0xF] = 1;
     else                                                    registers[0xF] = 0;
 
     registers[OP_HIGH_BYTE] -= registers[OP_LOW_BYTE];
