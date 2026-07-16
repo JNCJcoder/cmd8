@@ -22,6 +22,7 @@ Funcionando apenas no Windows.
 
 Programas testados:
 
+- [5-quirks.ch8](https://github.com/Timendus/chip8-test-suite)
 - [test_opcode.ch8](https://github.com/corax89/chip8-test-rom/)
 - [pong.rom](https://github.com/badlogic/chip8/tree/master/roms)
 - [invaders.rom](https://github.com/badlogic/chip8/tree/master/roms)
