@@ -350,6 +350,8 @@ void Chip8::OP_Fx55()
     {
         memory[index + i] = registers[i];
     }
+
+    index += count + 1;
 }
 
 void Chip8::OP_Fx65()
@@ -360,4 +362,6 @@ void Chip8::OP_Fx65()
     {
         registers[i] = memory[index + i];
     }
+
+    index += count + 1;
 }
