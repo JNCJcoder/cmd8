@@ -206,10 +206,10 @@ void Chip8::OP_8xy4()
 
 void Chip8::OP_8xy5()
 {
-    if (registers[OP_HIGH_BYTE] >= registers[OP_LOW_BYTE])  registers[0xF] = 1;
-    else                                                    registers[0xF] = 0;
+    uint8_t carry = registers[OP_HIGH_BYTE] >= registers[OP_LOW_BYTE];
 
-    registers[OP_HIGH_BYTE] -= registers[OP_LOW_BYTE];
+    registers[OP_HIGH_BYTE] = registers[OP_HIGH_BYTE] - registers[OP_LOW_BYTE];
+    registers[0xF] = carry;
 }
 
 void Chip8::OP_8xy6()
@@ -220,10 +220,10 @@ void Chip8::OP_8xy6()
 
 void Chip8::OP_8xy7()
 {
-    if (registers[OP_LOW_BYTE] > registers[OP_HIGH_BYTE])   registers[0xF] = 1;
-    else                                                    registers[0xF] = 0;
+    uint8_t carry = registers[OP_LOW_BYTE] >= registers[OP_HIGH_BYTE];
 
     registers[OP_HIGH_BYTE] = registers[OP_LOW_BYTE] - registers[OP_HIGH_BYTE];
+    registers[0xF] = carry;
 }
 
 void Chip8::OP_8xyE()
