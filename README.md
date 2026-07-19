@@ -22,6 +22,7 @@ Funcionando apenas no Windows.
 
 Programas testados:
 
+- [3-corax+.ch8](https://github.com/Timendus/chip8-test-suite)
 - [4-flags.ch8](https://github.com/Timendus/chip8-test-suite)
 - [5-quirks.ch8](https://github.com/Timendus/chip8-test-suite)
 - [test_opcode.ch8](https://github.com/corax89/chip8-test-rom/)
