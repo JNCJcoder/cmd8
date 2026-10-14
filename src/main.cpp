@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
             origin += FRAME_TIME_MS;
             frameCatchUp++;
 
-            chip8.keypad = console.checkKeys();
+            console.checkKeys(chip8.keypad);
 
             for (int index = 0; index < TICKRATE; index++)
             {

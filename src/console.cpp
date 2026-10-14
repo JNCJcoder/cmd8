@@ -31,25 +31,24 @@ void Console::drawBuffer(uint32_t* buffer)
     }
 }
 
-uint8_t Console::checkKeys()
+void Console::checkKeys(bool* keypad)
 {
-    if      ( GetAsyncKeyState((unsigned short)'X') & 0x8000 ) return 0;
-    else if ( GetAsyncKeyState((unsigned short)'1') & 0x8000 ) return 1;
-    else if ( GetAsyncKeyState((unsigned short)'2') & 0x8000 ) return 2;
-    else if ( GetAsyncKeyState((unsigned short)'3') & 0x8000 ) return 3;
-    else if ( GetAsyncKeyState((unsigned short)'Q') & 0x8000 ) return 4;
-    else if ( GetAsyncKeyState((unsigned short)'W') & 0x8000 ) return 5;
-    else if ( GetAsyncKeyState((unsigned short)'E') & 0x8000 ) return 6;
-    else if ( GetAsyncKeyState((unsigned short)'A') & 0x8000 ) return 7;
-    else if ( GetAsyncKeyState((unsigned short)'S') & 0x8000 ) return 8;
-    else if ( GetAsyncKeyState((unsigned short)'D') & 0x8000 ) return 9;
-    else if ( GetAsyncKeyState((unsigned short)'Z') & 0x8000 ) return 10;
-    else if ( GetAsyncKeyState((unsigned short)'C') & 0x8000 ) return 11;
-    else if ( GetAsyncKeyState((unsigned short)'4') & 0x8000 ) return 12;
-    else if ( GetAsyncKeyState((unsigned short)'R') & 0x8000 ) return 13;
-    else if ( GetAsyncKeyState((unsigned short)'F') & 0x8000 ) return 14;
-    else if ( GetAsyncKeyState((unsigned short)'V') & 0x8000 ) return 15;
-    return 16;
+    keypad[0]   = ( GetAsyncKeyState((unsigned short)'X') & 0x8000 ) ? true : false;
+    keypad[1]   = ( GetAsyncKeyState((unsigned short)'1') & 0x8000 ) ? true : false;
+    keypad[2]   = ( GetAsyncKeyState((unsigned short)'2') & 0x8000 ) ? true : false;
+    keypad[3]   = ( GetAsyncKeyState((unsigned short)'3') & 0x8000 ) ? true : false;
+    keypad[4]   = ( GetAsyncKeyState((unsigned short)'Q') & 0x8000 ) ? true : false;
+    keypad[5]   = ( GetAsyncKeyState((unsigned short)'W') & 0x8000 ) ? true : false;
+    keypad[6]   = ( GetAsyncKeyState((unsigned short)'E') & 0x8000 ) ? true : false;
+    keypad[7]   = ( GetAsyncKeyState((unsigned short)'A') & 0x8000 ) ? true : false;
+    keypad[8]   = ( GetAsyncKeyState((unsigned short)'S') & 0x8000 ) ? true : false;
+    keypad[9]   = ( GetAsyncKeyState((unsigned short)'D') & 0x8000 ) ? true : false;
+    keypad[10]  = ( GetAsyncKeyState((unsigned short)'Z') & 0x8000 ) ? true : false;
+    keypad[11]  = ( GetAsyncKeyState((unsigned short)'C') & 0x8000 ) ? true : false;
+    keypad[12]  = ( GetAsyncKeyState((unsigned short)'4') & 0x8000 ) ? true : false;
+    keypad[13]  = ( GetAsyncKeyState((unsigned short)'R') & 0x8000 ) ? true : false;
+    keypad[14]  = ( GetAsyncKeyState((unsigned short)'F') & 0x8000 ) ? true : false;
+    keypad[15]  = ( GetAsyncKeyState((unsigned short)'V') & 0x8000 ) ? true : false;
 }
 
 void Console::updateScreen()

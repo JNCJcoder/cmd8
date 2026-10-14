@@ -13,6 +13,7 @@
 #define START_ADDRESS   0x200
 #define REGISTERS       16
 #define STACK_LEVELS    16
+#define KEYPAD_KEYS     16
 
 #define OP_ADDRESS      (opcode & 0x0FFFu)
 #define OP_BYTE         (opcode & 0x00FFu)
@@ -114,7 +115,8 @@ class Chip8
         void updateTimers();
 
         uint32_t    video[SCREEN_SIZE];
-        uint8_t     keypad;
+        bool        keypad[KEYPAD_KEYS];
+        uint8_t     keyPressed;
         uint8_t     soundTimer;
 };
 

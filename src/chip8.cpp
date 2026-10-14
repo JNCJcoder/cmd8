@@ -10,8 +10,11 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     delayTimer = 0u;
     soundTimer = 0u;
 
+    keyPressed = 0xFF;
+
     memset(video, 0, sizeof(video));
     memset(memory, 0x0, MAX_MEMORY);
+    memset(keypad, 0, sizeof(keypad));
     memcpy(memory, fontset, FONTSET_SIZE);
 
     randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
@@ -290,14 +293,14 @@ void Chip8::OP_Ex9E()
 {
     uint8_t key = registers[OP_HIGH_BYTE];
 
-    if (keypad == key) pc += 2;
+    if (keypad[key & 15]) pc += 2;
 }
 
 void Chip8::OP_ExA1()
 {
     uint8_t key = registers[OP_HIGH_BYTE];
 
-    if (keypad != key) pc += 2;
+    if (!keypad[key & 15]) pc += 2;
 }
 
 void Chip8::OP_Fx07()
@@ -307,8 +310,28 @@ void Chip8::OP_Fx07()
 
 void Chip8::OP_Fx0A()
 {
-    if (keypad <= 15)   registers[OP_HIGH_BYTE] = keypad;
-    else                pc -= 2;
+    if(keyPressed != 0xFF)
+    {
+        if(!keypad[keyPressed])
+        {
+            registers[OP_HIGH_BYTE] = keyPressed;
+            keyPressed = 0xFF;
+            return;
+        }
+    }
+    else
+    {
+        for (uint8_t i = 0; i < KEYPAD_KEYS; i++)
+        {
+            if(keypad[i])
+            {
+                keyPressed = i;
+                break;
+            }
+        }
+    }
+
+    pc -= 2;
 }
 
 void Chip8::OP_Fx15()

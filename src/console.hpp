@@ -22,7 +22,7 @@ class Console
 
         void draw(const uint16_t x, const uint16_t y, short character);
         void drawBuffer(uint32_t* buffer);
-        uint8_t checkKeys();
+        void checkKeys(bool* keypad);
         void updateScreen();
         void beep();
 };
