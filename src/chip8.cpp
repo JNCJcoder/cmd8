@@ -269,12 +269,26 @@ void Chip8::OP_Dxyn()
 
     for (unsigned int row = 0; row < height; ++row)
     {
+        uint8_t y = yPosition + row;
+
+        if (y >= SCREEN_HEIGHT)
+        {
+            break;
+        }
+
         uint8_t spriteByte = memory[index + row];
 
         for (unsigned int column = 0; column < 8; ++column)
         {
+            uint8_t x = xPosition + column;
+
+            if (x >= SCREEN_WIDTH)
+            {
+                break;
+            }
+
             uint8_t spritePixel = spriteByte & (0x80u >> column);
-            uint32_t* screenPixel = &video[(yPosition + row) * SCREEN_WIDTH + (xPosition + column)];
+            uint32_t* screenPixel = &video[y * SCREEN_WIDTH + x];
 
             if (spritePixel)
             {
