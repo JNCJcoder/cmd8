@@ -19,6 +19,31 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
 
     randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
 
+    for (auto& opFunc : table)
+    {
+        opFunc = &Chip8::OP_NULL;
+    }
+
+    for (auto& opFunc : table0)
+    {
+        opFunc = &Chip8::OP_NULL;
+    }
+
+    for (auto& opFunc : table8)
+    {
+        opFunc = &Chip8::OP_NULL;
+    }
+
+    for (auto& opFunc : tableE)
+    {
+        opFunc = &Chip8::OP_NULL;
+    }
+
+    for (auto& opFunc : tableF)
+    {
+        opFunc = &Chip8::OP_NULL;
+    }
+
     table[0x0]      = &Chip8::Table0;
     table[0x1]      = &Chip8::OP_1nnn;
     table[0x2]      = &Chip8::OP_2nnn;
