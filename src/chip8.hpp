@@ -8,6 +8,7 @@
 #include <cstring>
 
 #define MAX_MEMORY      4096
+#define MAX_ROM_SIZE    3583
 #define FONTSET_SIZE    80
 #define FONTSET_START   0x50
 #define START_ADDRESS   0x200

@@ -92,23 +92,27 @@ bool Chip8::loadRom(const char* fileName)
 {
     std::ifstream file(fileName, std::ios::binary | std::ios::ate);
 
-    const bool romIsOpen = file.is_open();
-    if (romIsOpen)
+    if (!file)
     {
-        std::streampos romSize = file.tellg();
-        char* buffer = new char[romSize];
-
-        file.seekg(0, std::ios::beg);
-        file.read(buffer, romSize);
-
-        for (long index = 0; index < romSize; index++)
-            memory[START_ADDRESS + index] = buffer[index];
-        
-        delete[] buffer;
+        return false;
     }
 
-    file.close();
-    return romIsOpen;
+    std::streampos romSize = file.tellg();
+
+    if (romSize <= 0 || romSize > MAX_ROM_SIZE)
+    {
+        return false;
+    }
+
+    file.seekg(0, std::ios::beg);
+    file.read(reinterpret_cast<char*>(memory + START_ADDRESS), romSize);
+
+    if (!file)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 void Chip8::fetchDecodeAndExecute()
