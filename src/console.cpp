@@ -20,7 +20,7 @@ Console::~Console()
 
 void Console::draw(const uint16_t x, const uint16_t y, short character)
 {
-    screen[y * CONSOLE_APPLICATION_16BIT + x] = character;
+    screen[y * CONSOLE_SCREEN_WIDTH + x] = character;
 }
 
 void Console::drawBuffer(uint32_t* buffer)
