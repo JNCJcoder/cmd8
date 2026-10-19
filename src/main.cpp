@@ -1,46 +1,56 @@
 #include <thread>
 #include <chrono>
+
 #include "console.hpp"
 #include "chip8.hpp"
+
+constexpr uint16_t  TICKRATE            = 20u;
+constexpr uint16_t  FPS                 = 60u;
+constexpr uint16_t  MS_PER_SECOND       = 1000u;
+constexpr float     FRAME_TIME_FLOAT    = (MS_PER_SECOND / FPS);
+
+constexpr auto FRAME_TIME_MS    = std::chrono::milliseconds(static_cast<int>(FRAME_TIME_FLOAT));
+constexpr auto HALF_FRAME       = FRAME_TIME_MS / 2;
 
 int main(int argc, char const *argv[])
 {
     Console console;
     Chip8 chip8;
+
     bool isRunning = chip8.loadRom(argv[1]);
 
-    const int TICKRATE = 20;
-    const int FPS = 60;
-    const int MS_PER_SECOND = 1000;
-    const float FRAME_TIME_FLOAT = MS_PER_SECOND / FPS;
-    const auto FRAME_TIME_MS = std::chrono::milliseconds((int)FRAME_TIME_FLOAT);
-    const auto HALF_FRAME = FRAME_TIME_MS / 2;
+    if (!isRunning)
+    {
+        return 1;
+    }
 
-    using clock = std::chrono::steady_clock;
-
-    auto last = clock::now();
+    auto last = std::chrono::steady_clock::now();
     auto origin = last + HALF_FRAME;
 
-    while(isRunning)
+    uint32_t frameCatchUp = 0u;
+
+    while (isRunning)
     {
-        auto now = clock::now();
+        auto now = std::chrono::steady_clock::now();
         last += std::chrono::duration_cast<std::chrono::milliseconds>(now - last);
 
-        int frameCatchUp = 0;
-        while (origin < last - FRAME_TIME_MS && frameCatchUp < 2)
+        frameCatchUp = 0u;
+
+        while (origin < last - FRAME_TIME_MS && frameCatchUp < 2u)
         {
             origin += FRAME_TIME_MS;
             frameCatchUp++;
 
             console.checkKeys(chip8.keypad);
 
-            for (int index = 0; index < TICKRATE; index++)
+            for (uint16_t index = 0u; index < TICKRATE; index++)
             {
                 chip8.fetchDecodeAndExecute();
             }
 
             chip8.updateTimers();
-            if(chip8.soundTimer == 1)
+
+            if (chip8.soundTimer == 1u)
             {
                 console.beep();
             }
