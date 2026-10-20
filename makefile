@@ -1,20 +1,20 @@
 # Name of the project
 PROJ_NAME=cmd8
  
-# .c files
-C_SOURCE=$(wildcard ./src/*.cpp)
- 
-# .h files
-H_SOURCE=$(wildcard ./src/*.hpp)
+# .cpp files
+CPP_DIR=src
+CPP_SOURCE=$(wildcard $(CPP_DIR)/*.cpp)
  
 # Object files
-OBJ=$(C_SOURCE:.c=.o)
+OBJ_DIR=obj
+OBJ=$(patsubst $(CPP_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(CPP_SOURCE))
  
 # Compiler
-CC=g++
+CXX=g++
  
-# Flags for compiler
-CC_FLAGS=-O3 -static -static-libgcc -static-libstdc++
+# Flags
+CXX_FLAGS=-O3
+LD_FLAGS=-flto -static -static-libgcc -static-libstdc++
  
 #
 # Compilation and linking
@@ -22,13 +22,15 @@ CC_FLAGS=-O3 -static -static-libgcc -static-libstdc++
 all: $(PROJ_NAME)
  
 $(PROJ_NAME): $(OBJ)
-	$(CC) -o $@ $^
- 
-%.o: %.cpp %.hpp
-	$(CC) -o $@ $< $(CC_FLAGS)
- 
-main.o: main.cpp $(H_SOURCE)
-	$(CC) -o $@ $< $(CC_FLAGS)
+	$(CXX) $(OBJ) -o $@ $(LD_FLAGS)
+
+$(OBJ_DIR)/%.o: $(CPP_DIR)/%.cpp | $(OBJ_DIR)
+	$(CXX) $(CXX_FLAGS) -c $< -o $@
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
  
 clean:
-	rm -rf *.o $(PROJ_NAME) *~
+	rm -rf $(OBJ_DIR) $(PROJ_NAME)
+
+.PHONY: all clean
