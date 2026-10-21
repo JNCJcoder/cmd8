@@ -19,11 +19,6 @@ Console::~Console()
     CloseHandle(hConsole);
 }
 
-void Console::draw(const uint16_t x, const uint16_t y, short character)
-{
-    screen[y * CONSOLE_SCREEN_WIDTH + x] = character;
-}
-
 void Console::drawBuffer(uint32_t* buffer)
 {
     for (uint16_t index = 0; index < CONSOLE_SCREEN_SIZE; ++index)
