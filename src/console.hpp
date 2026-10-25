@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <windows.h>
 
+constexpr uint8_t   CONSOLE_PIXEL_SIZE    = 10u;
 constexpr uint8_t   CONSOLE_SCREEN_WIDTH  = 64u;
 constexpr uint8_t   CONSOLE_SCREEN_HEIGHT = 32u;
 constexpr uint16_t  CONSOLE_SCREEN_SIZE   = (CONSOLE_SCREEN_WIDTH * CONSOLE_SCREEN_HEIGHT);
@@ -14,8 +15,9 @@ constexpr uint16_t  CONSOLE_SCREEN_SIZE   = (CONSOLE_SCREEN_WIDTH * CONSOLE_SCRE
 class Console
 {
     private:
-        wchar_t *screen     = new wchar_t[CONSOLE_SCREEN_SIZE];
-        HANDLE  hConsole    = INVALID_HANDLE_VALUE;
+        CHAR_INFO   screen[CONSOLE_SCREEN_SIZE];
+        HANDLE      hConsole                        = INVALID_HANDLE_VALUE;
+        HANDLE      hConsoleIn                      = INVALID_HANDLE_VALUE;
     
     public:
         Console();
