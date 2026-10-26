@@ -15,7 +15,7 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     memset(video, 0x00000000u, sizeof(video));
     memset(memory, 0x00u, MAX_MEMORY);
     memset(keypad, false, sizeof(keypad));
-    memcpy(memory, fontset, FONTSET_SIZE);
+    memcpy(memory + FONTSET_START, fontset, FONTSET_SIZE);
 
     randByte = std::uniform_int_distribution<uint8_t>(0x00u, 0xFFu);
 
