@@ -10,7 +10,11 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     delayTimer = 0u;
     soundTimer = 0u;
 
+    compatibleMode  = false;
+    running         = true;
+
     keyPressed = 0xFFu;
+    exitStatus = 0x0u;
 
     memset(video, 0x00000000u, sizeof(video));
     memset(memory, 0x00u, MAX_MEMORY);
@@ -61,8 +65,25 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     table[0x0Eu]    = &Chip8::TableE;
     table[0x0Fu]    = &Chip8::TableF;
 
-    table0[0x00u]   = &Chip8::OP_00E0;
-    table0[0x0Eu]   = &Chip8::OP_00EE;
+    table0[0x10u]   = &Chip8::OP_001n;
+    table0[0x11u]   = &Chip8::OP_001n;
+    table0[0x12u]   = &Chip8::OP_001n;
+    table0[0x13u]   = &Chip8::OP_001n;
+    table0[0x14u]   = &Chip8::OP_001n;
+    table0[0x15u]   = &Chip8::OP_001n;
+    table0[0x16u]   = &Chip8::OP_001n;
+    table0[0x17u]   = &Chip8::OP_001n;
+    table0[0x18u]   = &Chip8::OP_001n;
+    table0[0x19u]   = &Chip8::OP_001n;
+    table0[0x1Au]   = &Chip8::OP_001n;
+    table0[0x1Bu]   = &Chip8::OP_001n;
+    table0[0x1Cu]   = &Chip8::OP_001n;
+    table0[0x1Du]   = &Chip8::OP_001n;
+    table0[0x1Eu]   = &Chip8::OP_001n;
+    table0[0x1Fu]   = &Chip8::OP_001n;
+    table0[0xE0u]   = &Chip8::OP_00E0;
+    table0[0xEEu]   = &Chip8::OP_00EE;
+    table0[0xFAu]   = &Chip8::OP_00FA;
 
     table8[0x00u]   = &Chip8::OP_8xy0;
     table8[0x01u]   = &Chip8::OP_8xy1;
@@ -115,13 +136,15 @@ bool Chip8::loadRom(const char* fileName)
     return true;
 }
 
-void Chip8::fetchDecodeAndExecute()
+bool Chip8::fetchDecodeAndExecute()
 {
     opcode = (memory[pc] << 8u) | memory[pc + 1u];
 
     pc += 2u;
 
     ((*this).*(table[(opcode & 0xF000u) >> 12u]))();
+
+    return running;
 }
 
 void Chip8::updateTimers()
@@ -139,7 +162,7 @@ void Chip8::updateTimers()
 
 void Chip8::Table0()
 {
-    ((*this).*(table0[OP_NIBBLE]))();
+    ((*this).*(table0[OP_BYTE]))();
 }
 
 void Chip8::Table8()
@@ -162,6 +185,12 @@ void Chip8::OP_NULL()
 
 }
 
+void Chip8::OP_001n()
+{
+    exitStatus = OP_NIBBLE;
+    running = false;
+}
+
 void Chip8::OP_00E0()
 {
     memset(video, 0x00000000u, sizeof(video));
@@ -170,6 +199,11 @@ void Chip8::OP_00E0()
 void Chip8::OP_00EE()
 {
     pc = stack[--sp];
+}
+
+void Chip8::OP_00FA()
+{
+    compatibleMode = !compatibleMode;
 }
 
 void Chip8::OP_1nnn()
@@ -451,7 +485,10 @@ void Chip8::OP_Fx55()
         memory[index + i] = registers[i];
     }
 
-    index += count + 1u;
+    if (!compatibleMode)
+    {
+        index += count + 1u;
+    }
 }
 
 void Chip8::OP_Fx65()
@@ -463,5 +500,8 @@ void Chip8::OP_Fx65()
         registers[i] = memory[index + i];
     }
 
-    index += count + 1u;
+    if (!compatibleMode)
+    {
+        index += count + 1u;
+    }
 }

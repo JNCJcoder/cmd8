@@ -57,6 +57,8 @@ class Chip8
         uint8_t     memory[MAX_MEMORY];
         uint8_t     sp;
         uint8_t     delayTimer;
+        bool        compatibleMode;
+        bool        running;
 
         std::default_random_engine randGen;
         std::uniform_int_distribution<uint8_t> randByte;
@@ -67,8 +69,10 @@ class Chip8
         void TableF();
 
         void OP_NULL();     // Do nothing
+        void OP_001n();     // EXIT N
         void OP_00E0();     // CLS
         void OP_00EE();     // RET
+        void OP_00FA();     // COMPAT
         void OP_1nnn();     // JP address
         void OP_2nnn();     // CALL address
         void OP_3xkk();     // SE Vx, byte
@@ -105,7 +109,7 @@ class Chip8
         typedef void (Chip8::*Chip8Func)();
 
         Chip8Func table[0x0Fu + 1u]     { &Chip8::OP_NULL };
-        Chip8Func table0[0x0Fu + 1u]    { &Chip8::OP_NULL };
+        Chip8Func table0[0xFFu + 1u]    { &Chip8::OP_NULL };
         Chip8Func table8[0x0Fu + 1u]    { &Chip8::OP_NULL };
         Chip8Func tableE[0x0Fu + 1u]    { &Chip8::OP_NULL };
         Chip8Func tableF[0xFFu + 1u]    { &Chip8::OP_NULL };
@@ -114,13 +118,14 @@ class Chip8
         Chip8();
 
         bool loadRom(const char* fileName);
-        void fetchDecodeAndExecute();
+        bool fetchDecodeAndExecute();
         void updateTimers();
 
         uint32_t    video[SCREEN_SIZE];
         bool        keypad[KEYPAD_KEYS];
         uint8_t     keyPressed;
         uint8_t     soundTimer;
+        uint8_t     exitStatus;
 };
 
 #endif // __CHIP8_HPP__

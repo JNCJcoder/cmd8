@@ -45,7 +45,10 @@ int main(int argc, char const *argv[])
 
             for (uint16_t index = 0u; index < TICKRATE; index++)
             {
-                chip8.fetchDecodeAndExecute();
+                if (!chip8.fetchDecodeAndExecute())
+                {
+                    return chip8.exitStatus;
+                }
             }
 
             chip8.updateTimers();
