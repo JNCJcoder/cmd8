@@ -15,6 +15,7 @@
 #define REGISTERS       0x10u
 #define STACK_LEVELS    0x10u
 #define KEYPAD_KEYS     0x10u
+#define RPL_SIZE        0x10u
 
 #define OP_ADDRESS      (opcode & 0x0FFFu)
 #define OP_BYTE         (opcode & 0x00FFu)
@@ -54,6 +55,7 @@ class Chip8
         uint16_t    index;
         uint16_t    stack[STACK_LEVELS];
         uint8_t     registers[REGISTERS];
+        uint8_t     flagsRPL[RPL_SIZE];
         uint8_t     memory[MAX_MEMORY];
         uint8_t     sp;
         uint8_t     delayTimer;
@@ -73,6 +75,7 @@ class Chip8
         void OP_00E0();     // CLS
         void OP_00EE();     // RET
         void OP_00FA();     // COMPAT
+        void OP_00FD();     // EXIT
         void OP_1nnn();     // JP address
         void OP_2nnn();     // CALL address
         void OP_3xkk();     // SE Vx, byte
@@ -105,6 +108,8 @@ class Chip8
         void OP_Fx33();     // LD B, Vx
         void OP_Fx55();     // LD [I], Vx
         void OP_Fx65();     // LD Vx, [I]
+        void OP_Fx75();     // LD R, Vx
+        void OP_Fx85();     // LD Vx, R
 
         typedef void (Chip8::*Chip8Func)();
 

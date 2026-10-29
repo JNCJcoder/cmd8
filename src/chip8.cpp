@@ -18,6 +18,7 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
 
     memset(video, 0x00000000u, sizeof(video));
     memset(memory, 0x00u, MAX_MEMORY);
+    memset(flagsRPL, 0x00u, sizeof(flagsRPL));
     memset(keypad, false, sizeof(keypad));
     memcpy(memory + FONTSET_START, fontset, FONTSET_SIZE);
 
@@ -84,6 +85,7 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     table0[0xE0u]   = &Chip8::OP_00E0;
     table0[0xEEu]   = &Chip8::OP_00EE;
     table0[0xFAu]   = &Chip8::OP_00FA;
+    table0[0xFDu]   = &Chip8::OP_00FD;
 
     table8[0x00u]   = &Chip8::OP_8xy0;
     table8[0x01u]   = &Chip8::OP_8xy1;
@@ -107,6 +109,8 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     tableF[0x33u]   = &Chip8::OP_Fx33;
     tableF[0x55u]   = &Chip8::OP_Fx55;
     tableF[0x65u]   = &Chip8::OP_Fx65;
+    tableF[0x75u]   = &Chip8::OP_Fx75;
+    tableF[0x85u]   = &Chip8::OP_Fx85;
 }
 
 bool Chip8::loadRom(const char* fileName)
@@ -204,6 +208,12 @@ void Chip8::OP_00EE()
 void Chip8::OP_00FA()
 {
     compatibleMode = !compatibleMode;
+}
+
+void Chip8::OP_00FD()
+{
+    exitStatus = 0;
+    running = false;
 }
 
 void Chip8::OP_1nnn()
@@ -503,5 +513,25 @@ void Chip8::OP_Fx65()
     if (!compatibleMode)
     {
         index += count + 1u;
+    }
+}
+
+void Chip8::OP_Fx75()
+{
+    const uint8_t count = OP_HIGH_BYTE;
+
+    for (uint8_t i = 0u; i <= count; ++i)
+    {
+        flagsRPL[i] = registers[i];
+    }
+}
+
+void Chip8::OP_Fx85()
+{
+    const uint8_t count = OP_HIGH_BYTE;
+
+    for (uint8_t i = 0u; i <= count; ++i)
+    {
+        registers[i] = flagsRPL[i];
     }
 }
