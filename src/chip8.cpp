@@ -2,7 +2,7 @@
 
 Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().count())
 {
-    pc      = START_ADDRESS;
+    pc      = 0x0000u;
     opcode  = 0x0000u;
     index   = 0x0000u;
     sp      = 0x00u;
@@ -129,8 +129,28 @@ bool Chip8::loadRom(const char* fileName)
         return false;
     }
 
+    const char* extension = strrchr(fileName, '.');
+
+    uint16_t startMemory = 0x0000u;
+
+    if (extension == NULL)
+    {
+        return false;
+    }
+
+    if (strcmp(extension, ".ch8") == 0 || strcmp(extension, ".c8") == 0)
+    {   /* Chip-8 */
+        pc          = START_ADDRESS_CH8;
+        startMemory = START_ADDRESS_CH8;
+    }
+    else
+    {   /* Generic Chip-8 */
+        pc          = START_ADDRESS_CH8;
+        startMemory = START_ADDRESS_CH8;
+    }
+
     file.seekg(0, std::ios::beg);
-    file.read(reinterpret_cast<char*>(memory + START_ADDRESS), romSize);
+    file.read(reinterpret_cast<char*>(memory + startMemory), romSize);
 
     if (!file)
     {

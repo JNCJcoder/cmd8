@@ -7,15 +7,15 @@
 #include <chrono>
 #include <cstring>
 
-#define MAX_MEMORY      0x1000u
-#define MAX_ROM_SIZE    0x0DFFu
-#define FONTSET_SIZE    0x50u
-#define FONTSET_START   0x50u
-#define START_ADDRESS   0x200u
-#define REGISTERS       0x10u
-#define STACK_LEVELS    0x10u
-#define KEYPAD_KEYS     0x10u
-#define RPL_SIZE        0x10u
+#define MAX_MEMORY          0x1000u
+#define MAX_ROM_SIZE        0x0DFFu
+#define FONTSET_SIZE        0x50u
+#define FONTSET_START       0x50u
+#define START_ADDRESS_CH8   0x200u
+#define REGISTERS           0x10u
+#define STACK_LEVELS        0x10u
+#define KEYPAD_KEYS         0x10u
+#define RPL_SIZE            0x10u
 
 #define OP_ADDRESS      (opcode & 0x0FFFu)
 #define OP_BYTE         (opcode & 0x00FFu)
