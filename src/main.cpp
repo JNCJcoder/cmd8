@@ -17,6 +17,11 @@ int main(int argc, char const *argv[])
     Console console;
     Chip8 chip8;
 
+    if (argc != 2)
+    {
+        return 1;
+    }
+
     bool isRunning = chip8.loadRom(argv[1]);
 
     if (!isRunning)
