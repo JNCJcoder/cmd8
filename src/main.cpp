@@ -29,6 +29,11 @@ int main(int argc, char const *argv[])
         return 1;
     }
 
+    if (!console.isInitialized())
+    {
+        return 1;
+    }
+
     auto last = std::chrono::steady_clock::now();
     auto origin = last + HALF_FRAME;
 
@@ -46,7 +51,7 @@ int main(int argc, char const *argv[])
             origin += FRAME_TIME_MS;
             frameCatchUp++;
 
-            console.checkKeys(chip8.keypad);
+            console.updateInput(chip8.keypad1, chip8.keypad2, &isRunning);
 
             for (uint16_t index = 0u; index < TICKRATE; index++)
             {
@@ -58,13 +63,8 @@ int main(int argc, char const *argv[])
 
             chip8.updateTimers();
 
-            if (chip8.soundTimer == 1u)
-            {
-                console.beep();
-            }
-
-            console.drawBuffer(chip8.video);
-            console.updateScreen();
+            console.updateSound(chip8.soundTimer, chip8.audioFrequency);
+            console.updateScreen(chip8.video, chip8.videoColor, chip8.backgroundColor);
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));

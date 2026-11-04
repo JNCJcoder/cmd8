@@ -13,13 +13,20 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     compatibleMode  = false;
     running         = true;
 
-    keyPressed = 0xFFu;
+    keyPressed1 = 0xFFu;
+    keyPressed2 = 0xFFu;
     exitStatus = 0x0u;
 
-    memset(video, 0x00000000u, sizeof(video));
+    audioFrequency = 0x00u;
+
+    backgroundColor = 0x00u;
+
+    memset(video, 0x00u, sizeof(video));
+    memset(videoColor, 0x07u, sizeof(videoColor));
     memset(memory, 0x00u, MAX_MEMORY);
     memset(flagsRPL, 0x00u, sizeof(flagsRPL));
-    memset(keypad, false, sizeof(keypad));
+    memset(keypad1, false, sizeof(keypad1));
+    memset(keypad2, false, sizeof(keypad2));
     memcpy(memory + FONTSET_START, fontset, FONTSET_SIZE);
 
     randByte = std::uniform_int_distribution<uint8_t>(0x00u, 0xFFu);
@@ -30,6 +37,16 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     }
 
     for (auto& opFunc : table0)
+    {
+        opFunc = &Chip8::OP_NULL;
+    }
+
+    for (auto& opFunc : table5)
+    {
+        opFunc = &Chip8::OP_NULL;
+    }
+
+    for (auto& opFunc : tableB)
     {
         opFunc = &Chip8::OP_NULL;
     }
@@ -54,7 +71,7 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     table[0x02u]    = &Chip8::OP_2nnn;
     table[0x03u]    = &Chip8::OP_3xkk;
     table[0x04u]    = &Chip8::OP_4xkk;
-    table[0x05u]    = &Chip8::OP_5xy0;
+    table[0x05u]    = &Chip8::Table5;
     table[0x06u]    = &Chip8::OP_6xkk;
     table[0x07u]    = &Chip8::OP_7xkk;
     table[0x08u]    = &Chip8::Table8;
@@ -82,10 +99,14 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     table0[0x1Du]   = &Chip8::OP_001n;
     table0[0x1Eu]   = &Chip8::OP_001n;
     table0[0x1Fu]   = &Chip8::OP_001n;
+    table0[0xA0u]   = &Chip8::OP_02A0;
     table0[0xE0u]   = &Chip8::OP_00E0;
     table0[0xEEu]   = &Chip8::OP_00EE;
     table0[0xFAu]   = &Chip8::OP_00FA;
     table0[0xFDu]   = &Chip8::OP_00FD;
+
+    table5[0x00u]   = &Chip8::OP_5xy0;
+    table5[0x01u]   = &Chip8::OP_5xy1;
 
     table8[0x00u]   = &Chip8::OP_8xy0;
     table8[0x01u]   = &Chip8::OP_8xy1;
@@ -97,8 +118,27 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     table8[0x07u]   = &Chip8::OP_8xy7;
     table8[0x0Eu]   = &Chip8::OP_8xyE;
 
+    tableB[0x00u]   = &Chip8::OP_Bxy0;
+    tableB[0x01u]   = &Chip8::OP_Bxyn;
+    tableB[0x02u]   = &Chip8::OP_Bxyn;
+    tableB[0x03u]   = &Chip8::OP_Bxyn;
+    tableB[0x04u]   = &Chip8::OP_Bxyn;
+    tableB[0x05u]   = &Chip8::OP_Bxyn;
+    tableB[0x06u]   = &Chip8::OP_Bxyn;
+    tableB[0x07u]   = &Chip8::OP_Bxyn;
+    tableB[0x08u]   = &Chip8::OP_Bxyn;
+    tableB[0x09u]   = &Chip8::OP_Bxyn;
+    tableB[0x0Au]   = &Chip8::OP_Bxyn;
+    tableB[0x0Bu]   = &Chip8::OP_Bxyn;
+    tableB[0x0Cu]   = &Chip8::OP_Bxyn;
+    tableB[0x0Du]   = &Chip8::OP_Bxyn;
+    tableB[0x0Eu]   = &Chip8::OP_Bxyn;
+    tableB[0x0Fu]   = &Chip8::OP_Bxyn;
+
     tableE[0x01u]   = &Chip8::OP_ExA1;
     tableE[0x0Eu]   = &Chip8::OP_Ex9E;
+    tableE[0x02u]   = &Chip8::OP_ExF2;
+    tableE[0x05u]   = &Chip8::OP_ExF5;
 
     tableF[0x07u]   = &Chip8::OP_Fx07;
     tableF[0x0Au]   = &Chip8::OP_Fx0A;
@@ -111,6 +151,8 @@ Chip8::Chip8(): randGen(std::chrono::system_clock::now().time_since_epoch().coun
     tableF[0x65u]   = &Chip8::OP_Fx65;
     tableF[0x75u]   = &Chip8::OP_Fx75;
     tableF[0x85u]   = &Chip8::OP_Fx85;
+    tableF[0xF8u]   = &Chip8::OP_FxF8;
+    tableF[0xFBu]   = &Chip8::OP_FxFB;
 }
 
 bool Chip8::loadRom(const char* fileName)
@@ -142,11 +184,30 @@ bool Chip8::loadRom(const char* fileName)
     {   /* Chip-8 */
         pc          = START_ADDRESS_CH8;
         startMemory = START_ADDRESS_CH8;
+
+        audioFrequency = 0x48u;
+
+        backgroundColor = 0x01u;
+    }
+    else if (strcmp(extension, ".c8x") == 0)
+    {   /* Chip-8X */
+        pc          = START_ADDRESS_C8X;
+        startMemory = START_ADDRESS_C8X;
+
+        audioFrequency = 0x00u;
+
+        backgroundColor = 0x00u;
+
+        table[0x0Bu] = &Chip8::TableB;
     }
     else
     {   /* Generic Chip-8 */
         pc          = START_ADDRESS_CH8;
         startMemory = START_ADDRESS_CH8;
+
+        audioFrequency = 0x48u;
+
+        backgroundColor = 0x00u;
     }
 
     file.seekg(0, std::ios::beg);
@@ -189,9 +250,19 @@ void Chip8::Table0()
     ((*this).*(table0[OP_BYTE]))();
 }
 
+void Chip8::Table5()
+{
+    ((*this).*(table5[OP_NIBBLE]))();
+}
+
 void Chip8::Table8()
 {
     ((*this).*(table8[OP_NIBBLE]))();
+}
+
+void Chip8::TableB()
+{
+    ((*this).*(tableB[OP_NIBBLE]))();
 }
 
 void Chip8::TableE()
@@ -217,7 +288,7 @@ void Chip8::OP_001n()
 
 void Chip8::OP_00E0()
 {
-    memset(video, 0x00000000u, sizeof(video));
+    memset(video, 0x00u, sizeof(video));
 }
 
 void Chip8::OP_00EE()
@@ -234,6 +305,11 @@ void Chip8::OP_00FD()
 {
     exitStatus = 0;
     running = false;
+}
+
+void Chip8::OP_02A0()
+{
+    backgroundColor = (backgroundColor + 1u) & 0x03u;
 }
 
 void Chip8::OP_1nnn()
@@ -270,6 +346,14 @@ void Chip8::OP_5xy0()
     {
         pc += 2u;
     }
+}
+
+void Chip8::OP_5xy1()
+{
+    const uint8_t high = ((registers[OP_HIGH_BYTE] >> 4u) + (registers[OP_LOW_BYTE] >> 4u));
+    const uint8_t low  = ((registers[OP_HIGH_BYTE] & 0x0Fu) + (registers[OP_LOW_BYTE] & 0x0Fu));
+
+    registers[OP_HIGH_BYTE] = ((high & 0x07u) << 4u) | (low & 0x07u);
 }
 
 void Chip8::OP_6xkk()
@@ -371,6 +455,68 @@ void Chip8::OP_Bnnn()
     pc = (registers[0x00u] + OP_ADDRESS);
 }
 
+void Chip8::OP_Bxy0()
+{
+    const uint8_t xRegister = registers[OP_HIGH_BYTE];
+    const uint8_t yRegister = registers[(OP_HIGH_BYTE + 1u) & 0x0Fu];
+
+    const uint8_t xPosition = (xRegister & 0x0Fu);
+    const uint8_t yPosition = (yRegister & 0x0Fu);
+
+    const uint8_t width = ((xRegister >> 4u) + 1u);
+    const uint8_t height = ((yRegister >> 4u) + 1u);
+
+    const uint8_t color = (registers[OP_LOW_BYTE] & 0x07u);
+
+    for (uint8_t row = 0u; row < height; ++row)
+    {
+        const uint8_t y = yPosition + row;
+
+        if (y >= 8u)
+        {
+            break;
+        }
+
+        for (uint8_t column = 0u; column < width; ++column)
+        {
+            const uint8_t x = xPosition + column;
+
+            if (x >= 8u)
+            {
+                break;
+            }
+
+            const uint8_t regionIndex = y * 8u + x;
+
+            videoColor[regionIndex] = color;
+        }
+    }
+}
+
+void Chip8::OP_Bxyn()
+{
+    const uint8_t height = OP_NIBBLE;
+    const uint8_t xPosition = (registers[OP_HIGH_BYTE] % SCREEN_WIDTH);
+    const uint8_t yPosition = (registers[(OP_HIGH_BYTE + 1u) & 0x0Fu] % SCREEN_HEIGHT);
+    const uint8_t color = (registers[OP_LOW_BYTE] & 0x07u);
+
+    const uint8_t xFirstRegion = (xPosition >> 3u) & 0x07u;
+    const uint8_t yFirstRegion = (yPosition & 0x1Fu);
+
+    const uint8_t xLastRegion = (xPosition + 7u) / 8u;
+    const uint8_t yLastRegion = (yPosition + height - 1u) / 4u;
+
+    for (uint8_t row = yFirstRegion; row <= yLastRegion && row < 8u; ++row)
+    {
+        for (uint8_t column = xFirstRegion; column <= xLastRegion && column < 8u; ++column)
+        {
+            const uint8_t regionIndex = row * 8u + column;
+
+            videoColor[regionIndex] = color;
+        }
+    }
+}
+
 void Chip8::OP_Cxkk()
 {
     registers[OP_HIGH_BYTE] = (randByte(randGen) & OP_BYTE);
@@ -405,16 +551,16 @@ void Chip8::OP_Dxyn()
             }
 
             const uint8_t spritePixel = spriteByte & (0x80u >> column);
-            uint32_t* screenPixel = &video[y * SCREEN_WIDTH + x];
+            uint8_t* screenPixel = &video[y * SCREEN_WIDTH + x];
 
             if (spritePixel)
             {
-                if (*screenPixel == 0xFFFFFFFFu)
+                if (*screenPixel == 0xFFu)
                 {
                     registers[0x0Fu] = 1u;
                 }
 
-                *screenPixel ^= 0xFFFFFFFFu;
+                *screenPixel ^= 0xFFu;
             }
         }
     }
@@ -424,7 +570,7 @@ void Chip8::OP_Ex9E()
 {
     const uint8_t key = registers[OP_HIGH_BYTE];
 
-    if (keypad[key & 0x0Fu])
+    if (keypad1[key & 0x0Fu])
     {
         pc += 2u;
     }
@@ -434,7 +580,27 @@ void Chip8::OP_ExA1()
 {
     const uint8_t key = registers[OP_HIGH_BYTE];
 
-    if (!keypad[key & 0x0Fu])
+    if (!keypad1[key & 0x0Fu])
+    {
+        pc += 2u;
+    }
+}
+
+void Chip8::OP_ExF2()
+{
+    const uint8_t key = registers[OP_HIGH_BYTE];
+
+    if (keypad2[key & 0x0Fu])
+    {
+        pc += 2u;
+    }
+}
+
+void Chip8::OP_ExF5()
+{
+    const uint8_t key = registers[OP_HIGH_BYTE];
+
+    if (!keypad2[key & 0x0Fu])
     {
         pc += 2u;
     }
@@ -447,12 +613,12 @@ void Chip8::OP_Fx07()
 
 void Chip8::OP_Fx0A()
 {
-    if (keyPressed != 0xFFu)
+    if (keyPressed1 != 0xFFu)
     {
-        if (!keypad[keyPressed])
+        if (!keypad1[keyPressed1])
         {
-            registers[OP_HIGH_BYTE] = keyPressed;
-            keyPressed = 0xFFu;
+            registers[OP_HIGH_BYTE] = keyPressed1;
+            keyPressed1 = 0xFFu;
             return;
         }
     }
@@ -460,9 +626,9 @@ void Chip8::OP_Fx0A()
     {
         for (uint8_t i = 0u; i < KEYPAD_KEYS; i++)
         {
-            if (keypad[i])
+            if (keypad1[i])
             {
-                keyPressed = i;
+                keyPressed1 = i;
                 break;
             }
         }
@@ -555,3 +721,35 @@ void Chip8::OP_Fx85()
         registers[i] = flagsRPL[i];
     }
 }
+
+void Chip8::OP_FxF8()
+{
+    audioFrequency = registers[OP_HIGH_BYTE];
+}
+
+void Chip8::OP_FxFB()
+{
+    if (keyPressed2 != 0xFFu)
+    {
+        if (!keypad2[keyPressed2])
+        {
+            registers[OP_HIGH_BYTE] = keyPressed2;
+            keyPressed2 = 0xFFu;
+            return;
+        }
+    }
+    else
+    {
+        for (uint8_t i = 0u; i < KEYPAD_KEYS; i++)
+        {
+            if (keypad2[i])
+            {
+                keyPressed2 = i;
+                break;
+            }
+        }
+    }
+
+    pc -= 2u;
+}
+

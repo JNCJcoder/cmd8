@@ -12,6 +12,7 @@
 #define FONTSET_SIZE        0x50u
 #define FONTSET_START       0x50u
 #define START_ADDRESS_CH8   0x200u
+#define START_ADDRESS_C8X   0x300u
 #define REGISTERS           0x10u
 #define STACK_LEVELS        0x10u
 #define KEYPAD_KEYS         0x10u
@@ -26,6 +27,10 @@
 constexpr uint8_t   SCREEN_WIDTH  = 64u;
 constexpr uint8_t   SCREEN_HEIGHT = 32u;
 constexpr uint16_t  SCREEN_SIZE   = (SCREEN_WIDTH * SCREEN_HEIGHT);
+
+constexpr uint8_t   SCREEN_COLOR_WIDTH  = 8u;
+constexpr uint8_t   SCREEN_COLOR_HEIGHT = 8u;
+constexpr uint16_t  SCREEN_COLOR_SIZE   = (SCREEN_COLOR_WIDTH * SCREEN_COLOR_HEIGHT);
 
 constexpr uint8_t fontset[FONTSET_SIZE] =
 {
@@ -66,7 +71,9 @@ class Chip8
         std::uniform_int_distribution<uint8_t> randByte;
 
         void Table0();
+        void Table5();
         void Table8();
+        void TableB();
         void TableE();
         void TableF();
 
@@ -76,11 +83,13 @@ class Chip8
         void OP_00EE();     // RET
         void OP_00FA();     // COMPAT
         void OP_00FD();     // EXIT
+        void OP_02A0();     // STEPCOL
         void OP_1nnn();     // JP address
         void OP_2nnn();     // CALL address
         void OP_3xkk();     // SE Vx, byte
         void OP_4xkk();     // SNE Vx, byte
         void OP_5xy0();     // SE Vx, Vy
+        void OP_5xy1();     // ADD8 Vx, Vy
         void OP_6xkk();     // LD Vx, byte
         void OP_7xkk();     // ADD Vx, byte
         void OP_8xy0();     // LD Vx, Vy
@@ -95,10 +104,14 @@ class Chip8
         void OP_9xy0();     // SNE Vx, Vy
         void OP_Annn();     // LD I, address
         void OP_Bnnn();     // JP V0, address
+        void OP_Bxy0();     // COL Vx, Vy
+        void OP_Bxyn();     // COL Vx, Vy, N
         void OP_Cxkk();     // RND Vx, byte
         void OP_Dxyn();     // DRW Vx, Vy, height
         void OP_Ex9E();     // SKP Vx
         void OP_ExA1();     // SKNP Vx
+        void OP_ExF2();     // SKP Vx
+        void OP_ExF5();     // SKNP Vx
         void OP_Fx07();     // LD Vx, DT
         void OP_Fx0A();     // LD Vx, K
         void OP_Fx15();     // LD DT, Vx
@@ -110,12 +123,16 @@ class Chip8
         void OP_Fx65();     // LD Vx, [I]
         void OP_Fx75();     // LD R, Vx
         void OP_Fx85();     // LD Vx, R
+        void OP_FxF8();     // OUT Vx
+        void OP_FxFB();     // LD Vx, K
 
         typedef void (Chip8::*Chip8Func)();
 
         Chip8Func table[0x0Fu + 1u]     { &Chip8::OP_NULL };
         Chip8Func table0[0xFFu + 1u]    { &Chip8::OP_NULL };
+        Chip8Func table5[0x02u + 1u]    { &Chip8::OP_NULL };
         Chip8Func table8[0x0Fu + 1u]    { &Chip8::OP_NULL };
+        Chip8Func tableB[0x0Fu + 1u]    { &Chip8::OP_NULL };
         Chip8Func tableE[0x0Fu + 1u]    { &Chip8::OP_NULL };
         Chip8Func tableF[0xFFu + 1u]    { &Chip8::OP_NULL };
 
@@ -126,11 +143,16 @@ class Chip8
         bool fetchDecodeAndExecute();
         void updateTimers();
 
-        uint32_t    video[SCREEN_SIZE];
-        bool        keypad[KEYPAD_KEYS];
-        uint8_t     keyPressed;
+        uint8_t     video[SCREEN_SIZE];
+        uint8_t     videoColor[SCREEN_COLOR_SIZE];
+        uint8_t     backgroundColor;
+        bool        keypad1[KEYPAD_KEYS];
+        bool        keypad2[KEYPAD_KEYS];
+        uint8_t     keyPressed1;
+        uint8_t     keyPressed2;
         uint8_t     soundTimer;
         uint8_t     exitStatus;
+        uint8_t     audioFrequency;
 };
 
 #endif // __CHIP8_HPP__

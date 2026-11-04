@@ -14,7 +14,7 @@ CXX=g++
  
 # Flags
 CXX_FLAGS=-O3
-LD_FLAGS=-flto -static -static-libgcc -static-libstdc++
+LD_FLAGS=-flto -static -static-libgcc -static-libstdc++ -lwinmm
  
 #
 # Compilation and linking
