@@ -13,7 +13,7 @@ OBJ=$(patsubst $(CPP_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(CPP_SOURCE))
 CXX=g++
  
 # Flags
-CXX_FLAGS=-O3
+CXX_FLAGS=-O3 -flto
 LD_FLAGS=-flto -static -static-libgcc -static-libstdc++ -lwinmm
  
 #
